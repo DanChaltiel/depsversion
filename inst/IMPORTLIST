@@ -1,0 +1,5 @@
+check_dots_empty = rlang
+filter = dplyr
+read_lines = readr
+set_names = rlang
+setequal = base

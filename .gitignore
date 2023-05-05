@@ -1,0 +1,3 @@
+.Rproj.user
+miniCRAN
+tests/testthat/inst/data_ns.rds

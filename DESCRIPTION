@@ -1,0 +1,29 @@
+Package: depsversion
+Title: Finds the minimum version of dependencies 
+Version: 0.1.0.9000
+Authors@R: 
+    person("Dan", "Chaltiel", ,"dan.chaltiel@gmail.com", role=c("aut", "cre"),
+           comment=c(ORCID="0000-0003-3488-779X"))
+Description: Finds the minimum version of dependencies needed in a package by checking 
+    when imported function were exported.
+License: GPL (>= 3)
+Encoding: UTF-8
+Imports:
+    cli (>= 3.0.0),
+    data.table (>= 1.1),
+    dplyr (>= 1.0.0),
+    glue (>= 1.0.0),
+    miniCRAN (>= 0.2.2),
+    pkgsearch (>= 3.0.0),
+    purrr (>= 0.2.3),
+    readr (>= 0.1.0),
+    rlang (>= 1.0.0),
+    stringr (>= 1.4.0),
+    tibble (>= 1.1),
+    tidyr (>= 0.3.0),
+    utils,
+Suggests: 
+    testthat (>= 3.0.0)
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Config/testthat/edition: 3
