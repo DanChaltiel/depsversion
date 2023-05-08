@@ -18,7 +18,7 @@
 #' @importFrom rlang check_dots_empty
 #' @importFrom glue glue
 build_cache = function(pkg, ...,
-                       cache=getOption("depsversion_cache", "data_ns.rds"),
+                       cache=get_cache_file(),
                        target=getOption("depsversion_target", "./miniCRAN"),
                        verbose=TRUE, update_cache=TRUE, dependencies=TRUE){
   start_time = Sys.time()
@@ -201,6 +201,7 @@ read_namespace_files = function(deps_todo, folder, verbose){
   pb = list(format="Reading NS file ({pb_current}/{pb_total}) {pb_bar} {pb_percent}  [{round(cli::pb_elapsed_raw)}s]  | ETA: {pb_eta}", clear=FALSE)
   if(!verbose) pb=FALSE
   rex = paste(deps_todo, collapse="|")
+  folder = str_remove(folder, "^./")
   rtn = tibble(package=dir(folder, pattern=rex, recursive=TRUE)) %>%
     filter(str_count(package, "/")==1) %>% #recursive only once
     separate(package, c("package", "version", NA), sep="_") %>%

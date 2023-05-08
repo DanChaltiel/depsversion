@@ -13,7 +13,7 @@
 #' @importFrom glue glue
 #' @importFrom tidyr separate
 #' @importFrom utils installed.packages
-get_code = function(ns_path, cache=getOption("depsversion_cache", "data_ns.rds"),
+get_import_code = function(ns_path, cache=getOption("depsversion_cache", "data_ns.rds"),
                     verbose=TRUE){
   ns_file = parse_ns(ns_path)
   if(is.null(ns_file)){

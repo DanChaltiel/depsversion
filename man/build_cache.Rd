@@ -7,7 +7,7 @@
 build_cache(
   pkg,
   ...,
-  cache = getOption("depsversion_cache", "data_ns.rds"),
+  cache = get_cache_file(),
   target = getOption("depsversion_target", "./miniCRAN"),
   verbose = TRUE,
   update_cache = TRUE,
