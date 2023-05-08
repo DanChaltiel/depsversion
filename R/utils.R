@@ -82,6 +82,18 @@ read_cache = function(cache){
   }
   data_ns = readRDS(cache)
 
+  dup_nested = data_ns$nested %>%
+    filter(n()>1, .by=c(package, version))
+  if(nrow(dup_nested)>0){
+    cli_warn(c("Duplicate rows in the cache.", "i"="run {.run filter(data_ns$nested, n()>1, .by=c(package, version))} to vizualize them and remove them accordingly."))
+  }
+
+  dup_summary = data_ns$summary %>%
+    filter(n()>1, .by=c(package, fun))
+  if(nrow(dup_nested)>0){
+    cli_warn(c("Duplicate rows in the cache.", "i"="run {.run filter(data_ns$summary, n()>1, .by=c(package, fun))} to vizualize them and remove them accordingly."))
+  }
+
   a = data_ns$nested %>% unnest(ns)
   b = data_ns$summary
   stopifnot(b$type=="export")
@@ -93,7 +105,37 @@ read_cache = function(cache){
 
 
 
-empty_cache = function() map(read_cache("inst/data_ns.rds"), ~filter(.x, F))
+# empty_cache = function() map(read_cache("inst/data_ns.rds"), ~filter(.x, F))
+empty_cache = list(
+  nested = structure(
+    list(
+      package = character(0),
+      version = structure(list(), class = c("package_version", "numeric_version")),
+      ns_file = character(0),
+      mtime = structure(numeric(0), tzone = "", class = c("POSIXct", "POSIXt")),
+      ns = list()
+    ),
+    row.names = integer(0),
+    class = c("tbl_df", "tbl", "data.frame")
+  ),
+  summary = structure(
+    list(
+      package = character(0),
+      type = character(0),
+      fun = character(0),
+      fun_min_vrs = structure(list(), class = c("package_version", "numeric_version")),
+      fun_max_vrs = structure(list(), class = c("package_version", "numeric_version")),
+      pkg_n_vrs = integer(0),
+      pkg_min_vrs = structure(list(), class = c("package_version", "numeric_version")),
+      pkg_max_vrs = structure(list(), class = c("package_version", "numeric_version")),
+      since_start = logical(0),
+      until_now = logical(0),
+      always = logical(0)
+    ),
+    class = c("tbl_df", "tbl", "data.frame"),
+    row.names = integer(0)
+  )
+)
 
 
 
@@ -141,4 +183,19 @@ parse_ns = function(ns_file){
   )
   attr(rtn, "mtime") = file.info(ns_file)$mtime
   rtn
+}
+
+
+get_cache_file = function(){
+  getOption("depsversion_cache", "data_ns.rds")
+}
+  #
+  # cache_local$nested[1:2]==cache_local2$nested[1:2]
+  #
+  #
+  # setdiff(cache_local$nested, cache_local2$nested)
+
+  saveRDS(cache_local, cache)
+  cli_inform(c("v"="Local cache has been updated"))
+
 }
