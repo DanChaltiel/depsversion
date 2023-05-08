@@ -7,7 +7,7 @@
 
 The goal of `depsversion` is to figure out which minimum version to indicate in DESCRIPTION's Import section.
 
-There are 2 main functions here: `get_code()` to get the code for the section, and `build_cache()` to build the information needed for `get_code()`.
+There are 2 main functions here: `get_import_code()` to get the code for the section, and `build_cache()` to build the information needed for `get_import_code()`.
 
 ## Installation
 
@@ -17,7 +17,99 @@ You can install the development version of `depsversion` like so:
 remotes::install_github("DanChaltiel/depsversion")
 ```
 
+
+
+## WIP
+
+This package if heavily experimental, any feedback or collaboration is welcome!
+
+Of note, I'd like to:
+
+ - deal with packages without NAMESPACE
+ - add a minimal date so you don't have to download very old archives
+ - fix some old bugs (like in "anytime_0.0.1_NAMESPACE")
+
+
 ## Get started
+
+Just provide a path to a NAMESPACE file to `get_import_code()`, and there you go.
+
+```r
+get_import_code("F:/GITHUB/crosstable/NAMESPACE")
+#> Replace the `Imports` section in DESCRIPTION with:
+#> Imports:
+#>     checkmate (>= 1.9.0),
+#>     cli (>= 3.0.0),
+#>     dplyr (>= 1.1.0),
+#>     flextable (>= 0.5.1),
+#>     forcats (>= 1.0.0),
+#>     glue (>= 1.3.0),
+#>     lifecycle (>= 0.2.0),
+#>     methods,
+#>     officer (>= 0.4.0),
+#>     purrr (>= 0.2.3),
+#>     rlang (>= 1.0.0),
+#>     stats,
+#>     stringr (>= 1.4.0),
+#>     tibble (>= 1.1),
+#>     tidyr (>= 1.0.0),
+#>     utils,
+```
+
+OK, let's be honest, that was a bit too easy. 
+
+This function actually relies on a cache file that needs to be built beforehand.
+
+You can download a starting cache using `update_cache_github()`. It is up-to-date for tidyverse packages as of May 2023. 
+
+If you come from the future or if you import non-tidyverse packages, you might need to rebuild the cache using `build_cache("my_package_on_CRAN")`.
+
+
+First, you need to download the cache file:
+
+```r
+update_cache_github()
+#> trying URL 'https://github.com/DanChaltiel/depsversion/raw/main/inst/data_ns.rds'
+#> Content type 'application/octet-stream' length 363495 bytes (354 KB)
+#> downloaded 354 KB
+#> 
+#> ! Local cache is missing 3955 versions of 211 packages
+#> v Local cache has been updated
+
+
+build_cache("crosstable")
+#> -- Init ----------------------------------------------------------------------------------
+#> Found 3955 versions of 211 packages in inst/data_ns.rds.
+#> v Cache is up-to-date for crosstable!
+```
+
+
+
+Don't worry, `get_import_code()` will tell you what code you should run if needed (See section "from scratch" in the end).
+
+
+
+
+## Limitations
+
+This package has several, potentially fatal limitations:
+
+> `depsversion` only takes exporting into account
+
+If a function gains a feature without changing name, this will be unnoticed.
+
+You can consider the output of `depsversion` as a minimum though.
+
+> `depsversion` cannot work with `ìmport()` calls in NAMESPACE (only `importFrom`)
+
+It cannot work with direct package reference with `::`.
+   
+This can be helped using my other package [`autoimport`](https://github.com/DanChaltiel/autoimport) which automatically finds imports by reading your code. Give it a shot!
+
+
+## Start from scratch
+
+The "Get started" example is working using pre-built information that were up-to-date on may 2023. Here is how it look like to start from scratch.
 
 First, set some options and ask for the code. 
 
@@ -27,8 +119,8 @@ Of note, many packages might be downloaded in `depsversion_target`, so the folde
 library(depsversion)
 options(depsversion_cache="path/to/my/cache.rds",
         depsversion_target="path/to/a/dir")
-get_code("F:/GITHUB/crosstable/NAMESPACE")
-#>Error in `get_code()`:
+get_import_code("F:/GITHUB/crosstable/NAMESPACE")
+#>Error in `get_import_code()`:
 #>! `cache` is missing information about packages checkmate, cli, dplyr, flextable,
 #>  forcats, glue, lifecycle, officer, purrr, rlang, stringr, tibble, and tidyr.
 #>  Please run the following code to build it:
@@ -141,7 +233,7 @@ depsversion::build_cache(c("checkmate", "cli", "dplyr", "flextable", "forcats", 
 There you are, you can get the code now!
 
 ```r
-get_code("F:/GITHUB/crosstable/NAMESPACE")
+get_import_code("F:/GITHUB/crosstable/NAMESPACE")
 #> Replace the `Imports` section in DESCRIPTION with:
 #> Imports:
 #>     checkmate (>= 1.9.0),
@@ -161,26 +253,3 @@ get_code("F:/GITHUB/crosstable/NAMESPACE")
 #>     tidyr (>= 1.0.0),
 #>     utils,
 ```
-
-## WIP
-
-This is a work in progress package, any feedback or collaboration is welcome!
-
-Of note, the `.rds` cache take very little space and it would be nice to have it centralized somewhere but I don't know how...
-
-## Limitations
-
-This package has several, potentially fatal limitations:
-
-> `depsversion` only takes exporting into account
-
-If a function gains a feature without changing name, this will be unnoticed.
-
-You can consider the output of `depsversion` as a minimum though.
-
-> `depsversion` cannot work with `ìmport()` calls in NAMESPACE (only `importFrom`)
-
-It cannot work with direct package reference with `::`.
-   
-This can be helped using my other package [`autoimport`](https://github.com/DanChaltiel/autoimport) which automatically finds imports by reading your code. Give it a shot!
-

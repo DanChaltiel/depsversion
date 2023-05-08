@@ -2,6 +2,7 @@
 
 export(build_cache)
 export(get_import_code)
+export(update_cache_github)
 importFrom(cli,cli_abort)
 importFrom(cli,cli_alert_success)
 importFrom(cli,cli_bullets)
