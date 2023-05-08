@@ -28,6 +28,7 @@ Of note, I'd like to:
  - deal with packages without NAMESPACE
  - add a minimal date so you don't have to download very old archives
  - fix some old bugs (like in "anytime_0.0.1_NAMESPACE")
+ - use a DESCRIPTION file in `build_cache()`?
 
 
 ## Get started
